@@ -1,0 +1,348 @@
+#callissues{
+  width:100%;
+  height:100%;
+}
+
+#callsentiment{
+  width:100%;
+  height:100%;
+}
+
+#callemotion{
+  width:100%;
+  height:100%;
+}
+
+#avgTimeElement{
+  width:100%;
+  height:100%;
+}
+
+.logoimg{
+  width:100%;
+  position: relative;
+}
+
+.calllogoimg{
+  width:100%;
+  position: relative;
+  top:230px;
+}
+.cardtxtDiv{
+  height:1000px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.logoimg img{
+  height: 200px;
+  position: absolute;
+  left: 15%;
+}
+.calllogoimg img{
+  height: 200px;
+  position: absolute;
+  left: 15%;
+}
+
+.up-card-text{
+  position: relative;
+  top:230px;
+  height: 300px;
+}
+.uploadcont{
+  height: 650px;
+}
+
+.uploadcont p{
+  font-size: 0.8rem;
+}
+
+.summarycont{
+  height:350px;
+}
+.form-floating > .form-control, .form-floating > .form-select {
+  height: calc(2rem);
+}
+.card-body{
+  padding: 1em;
+}
+.form-floating > .form-control {
+  padding:1rem;
+}
+.card-title, .card-subtitle {
+  margin-bottom: 0.5rem;
+}
+
+.pb-8 {
+  padding-bottom: 6.5rem !important; }
+
+.pb-10 {
+  padding-bottom: 10rem !important; }
+
+#txtOutput{
+  height: 19rem;
+}
+#txtResult{
+  height: 14.5rem;
+}
+
+audio {
+  width: 100%;
+  height: 54px;
+}
+label
+{
+  font-size:0.8em;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: start; 
+  align-items: flex-start;
+  flex: 1 1 auto;
+  padding: 1rem;
+  color: #15011d;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 50px; 
+  word-wrap: break-word;
+  background: #ffffff border-box;
+  background-image:url('../images/background.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  border: 0;
+  border-radius: 0.25rem;
+  box-shadow: 0 25px 100px 0 rgba(0, 0, 0, 0.15), 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.resultContainer{
+  display: table;
+}
+
+.resultscard {
+  position: relative;
+  display: table-cell;
+  flex-direction: column;
+  min-height: 250px;
+  height: auto;
+  word-wrap: break-word;
+  background: #ffffff border-box;
+  border: 0;
+  border-radius: 0.25rem;
+  box-shadow: 0 25px 100px 0 rgba(0, 0, 0, 0.15), 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.searchcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+  background: #ffffff border-box;
+  border:0;
+}
+.summarycard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+  background: #ffffff border-box;
+  border:0;
+}
+
+td {
+  text-align: left!important;
+}
+.spngreen {
+  display: block;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding: 1px 16px;
+  border-radius: 20px;
+  background-color: #57CF80;
+  width: 13em;
+  font-size: 13px;
+  user-select: none;
+}
+
+.spnyellow {
+  display: block;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding: 1px 16px;
+  border-radius: 12px;
+  border: 1px solid #FFB24A;
+  background-color: #FFDA80;
+  width: 7em;
+  font-size: 13px;
+  user-select: none;
+}
+
+.spnwhite {
+  display: block;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding: 1px 16px;
+  border: 1px solid #595959;
+  border-radius: 16px;
+  background-color: #FFFFFF;
+  user-select: none;
+  width: 15em;
+}
+
+.answer{
+  font-size: 13px;
+}
+
+#fileupload
+{
+  font-size: 13px;
+}
+
+.custom-footer.footer {
+  padding: 0.5rem 0;
+}
+
+#summary {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+  color: inherit;
+  white-space: pre-wrap;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+
+.progress2 {
+  padding: 2px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.25);  
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(0, 0, 0, 0.25);
+}
+
+.progress-bar2 {
+  height: 10px;
+  border-radius: 30px;
+  background-image: 
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+  transition: 0.4s linear;  
+  transition-property: width, background-color;    
+}
+
+.progress-moved .progress-bar2 {
+  width: 95%; 
+  background-color: #0070AD;  
+  animation: progressAnimation 20s;
+}
+@keyframes progressAnimation {
+  0%   { width: 5%; background-color: #12ABDB;}
+  100% { width: 85%; background-color: #0070AD; }
+}
+
+.progresscontainer {
+  margin: 100px auto;
+  width: 500px;
+  text-align: center;
+}
+
+.nav-tabs .nav-link {
+  align-items: center;
+  padding: 0.5rem 1rem; 
+  color: #15011d;
+  margin-bottom: -2px;
+  background: none;
+  border: 1px solid transparent;
+  margin-left: 0;
+  font-weight: 400;
+  border-radius: 0;
+}
+
+.btnBlue {
+  display: block;
+  -webkit-box-align: center;
+  align-items: center;
+  text-align: center;
+  padding: 1px 14px;
+  border-radius: 20px;
+  background-color: #12ABDB;
+  width: 12em;
+  font-size: 13px;
+  user-select: none;
+}
+
+.import-file-wrapper .import-file-section .import-file-inner {
+  display: flex;
+  align-items: center;
+  padding-left: 1.5rem;
+  background-color: #ececec;
+  border: 1px solid #cccccc;
+  width: 100%;
+  height: 40px;
+  border-radius: 3rem;
+}
+
+.import-file-wrapper {
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, .1);
+  border-radius: 4px;
+}
+
+.form-floating > input {
+  font-size: 0.9rem;
+}
+
+.form-floating > textarea {
+  font-size: 0.9rem;
+}
+.nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+}
+.bsvfootertext{
+  font-size: 0.8rem;
+  color: #0070AD;
+}
+
+.btn-xs {
+  padding: 0.2rem 1.5rem;
+  font-size: 0.9rem;
+  border-color: #cccccc;
+}
+
+.sidebar {
+  height: 100%;
+  width: 50px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  /*background:#003F61;*/
+  background-image:url('../images/background.svg');
+  overflow-x: hidden;
+  padding-top: 100px;
+  box-shadow: 0 25px 100px 0 rgba(0, 0, 0, 0.15), 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.sidebar a {
+  padding: 8px 10px 10px 8px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #003F61;
+  display: block;
+}
+
+/* Style links on mouse-over */
+.sidebar a:hover {
+  color: #818181;
+}

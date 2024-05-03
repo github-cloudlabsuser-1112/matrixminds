@@ -1,0 +1,63 @@
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="album py-0">
+  <div class="container">
+      <div class="row">
+            <div class="col-sm-3 " id="qcontainer" >
+              <div class="card mb-3 uploadcont" id="content">
+                <div class="card-body">
+                  <p class="card-text call-card-text">
+                  Upload an audio call to see how the call is classified and insights are retrieved.
+                  </p>
+                  <div class="form-floating mb-3 col-md-12 import-file-wrapper import-file-wrapper-stk import-default">
+                    <div class="import-file-section">
+                      <input type="file" class="form-control-file form-control-stk" id="fileResume" name="fileResume" />
+                      <div
+                        class="import-file-inner"
+                        id="import-file-section"
+                        role="button"
+                        tabindex="0">
+                        <span id="fileupload">Click to upload file</span>
+                        <label>
+                          <img
+                            src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTMuMDgwMDQgMTYuMlYyMC45MkwxOS45MiAyMC45MlYxNi4yIiBzdHJva2U9IiMxNTAxMUQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNMTEuNSAxNi45MUwxMS41IDQuMTIiIHN0cm9rZT0iIzE1MDExRCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGQ9Ik0xNS4yNCA3Ljk4OTk5TDExLjUgMy45MTk5OUw3Ljc2MDAxIDcuOTM5OTkiIHN0cm9rZT0iIzE1MDExRCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo="
+                            alt="import"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                    </div>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="Process()">Process</button>
+                    <div class="calllogoimg">
+                      <img src="images/voicelens1.jpg">
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-9">
+             <div class="row">
+                <div class="col-sm-12" id="summary-container">
+                  <div class="card summarycont">
+                    <div class="card-body align-items-start text-start cardtxtDiv">
+                      <h5 class="card-title">CALL ISSUES SUMMARY</h5>
+                      <div class="loader-logo-section" id="progresscontainer_1" style="display:none; text-align:center">
+                        <img
+                          src="images/loader.92c0e254.gif"
+                          alt="Loader"
+                          class="loader-logo"
+                        />
+                      </div>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              </div>
+            </div>
+        </div>
+  </div>
+</div>
+
+          
+{% endblock %}

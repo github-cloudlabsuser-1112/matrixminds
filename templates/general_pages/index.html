@@ -1,0 +1,99 @@
+{% extends 'shared/base.html' %}
+
+{% block content %}
+<div class="album py-0">
+  <div class="container">
+      <div class="row">
+            <div class="col-sm-3 " id="qcontainer" >
+              <div class="card mb-3 uploadcont" id="content">
+                <div class="card-body">
+                  <!--<div class="card-tag">Job Description you want to create</div>-->
+                    <div class="logoimg">
+                      <img src="images/voicelens1.jpg">
+                    </div>
+                    <p class="card-text up-card-text">
+                      VoiceLENS is an AI-powered application designed for telecommunication companies. It tackles the challenge of manually analyzing massive amounts of customer call data. By leveraging generative AI, VoiceLENS automates the process, extracting key insights in real-time. This empowers companies to understand customer sentiment, identify service issues, and optimize operations based on the voice of the customer.
+                    </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-9">
+             <div class="row">
+                <div class="col-sm-12" id="summary-container">
+                  <div class="card summarycont">
+                    <div class="card-body align-items-start text-start cardtxtDiv">
+                      <h5 class="card-title">CALL ISSUES SUMMARY</h5>
+                      <div class="loader-logo-section" id="progresscontainer_1" style="display:none; text-align:center">
+                        <img
+                          src="images/loader.92c0e254.gif"
+                          alt="Loader"
+                          class="loader-logo"
+                        />
+                      </div>
+                      <div id="callissues"></div>  
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="card">
+                    <div class="card-body align-items-start text-start">
+                      <h5 class="card-title">Call Sentiment Breakup</h5>
+                      <div class="loader-logo-section" id="progresscontainer" style="display:none; text-align:center">
+                        <img
+                          src="images/loader.92c0e254.gif"
+                          alt="Loader"
+                          class="loader-logo"
+                        />
+                      </div>
+                      
+                      <div id="callsentiment"></div>  
+                      
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                    <div class="card-body align-items-start text-start">
+                      <h5 class="card-title">Call Emotion Statistics</h5>
+                      <div class="loader-logo-section" id="progresscontainer" style="display:none; text-align:center">
+                        <img
+                          src="images/loader.92c0e254.gif"
+                          alt="Loader"
+                          class="loader-logo"
+                        />
+                      </div>
+                      
+                      <div id="callemotion"></div>
+                     
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <div class="card">
+                    <div class="card-body align-items-start text-start">
+                      <h5 class="card-title">Average Handling Time(Category)</h5>
+                      <div class="loader-logo-section" id="progresscontainer" style="display:none; text-align:center">
+                        <img
+                          src="images/loader.92c0e254.gif"
+                          alt="Loader"
+                          class="loader-logo"
+                        />
+                      </div>
+                      
+                      <div id="avgTimeElement"></div>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+  </div>
+</div>
+<script>
+  drawSummaryCharts();
+</script>
+          
+{% endblock %}

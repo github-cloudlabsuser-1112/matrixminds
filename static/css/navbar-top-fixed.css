@@ -1,0 +1,60 @@
+/* Show it is fixed to the top */
+body {
+  padding-top: 4.5rem;
+  font-family: 'Ubuntu', sans-serif !important;
+  background: url('../images/background.jpg')!important;
+  background-repeat: no-repeat!important;
+  background-size: cover!important;
+}
+.bg_bluecapgemini
+{
+ /* background-color: linear-gradient(237deg, #007bbd, #003f61);*/
+  background-image: linear-gradient(285deg, #007bbd, #003f61);
+}
+.headerTitle
+{
+  text-align: center;
+}
+.img-card
+{
+  margin-left: 5px;
+}
+.txtdescription
+{
+  font-size: 11pt;
+  color:#0070AD;
+}
+.cgFontcolor
+{
+  color:#0070AD;
+}
+.divUipath
+{
+  margin: 5px;
+  background-color: #FA4616;
+  color: white;
+  font-size: 8pt;
+  text-align: center;
+}
+.divBP
+{
+  margin: 5px;
+  background-color: #0b6db7;
+  color: white;
+  font-size: 8pt;
+  text-align: center;
+}
+.divAA
+{
+  margin: 5px;
+  background-color: #fba927;
+  color: white;
+  font-size: 8pt;
+  text-align: center;
+}
+
+.btn-bluecg
+{
+  background-color: #0b6db7;
+  color: white;
+}
