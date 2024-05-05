@@ -12,7 +12,7 @@
                   </p>
                   <div class="form-floating mb-3 col-md-12 import-file-wrapper import-file-wrapper-stk import-default">
                     <div class="import-file-section">
-                      <input type="file" class="form-control-file form-control-stk" id="fileResume" name="fileResume" />
+                      <input type="file" class="form-control-file form-control-stk" id="fileAudio" name="fileAudio" />
                       <div
                         class="import-file-inner"
                         id="import-file-section"
@@ -28,7 +28,7 @@
                       </div>
                     </div>
                     </div>
-                  <button type="button" class="btn btn-primary btn-sm" onclick="Process()">Process</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="processFile()">Process</button>
                     <div class="calllogoimg">
                       <img src="images/voicelens1.jpg">
                     </div>
@@ -38,16 +38,55 @@
             <div class="col-sm-9">
              <div class="row">
                 <div class="col-sm-12" id="summary-container">
-                  <div class="card summarycont">
+                  <div class="card callsummarycont">
                     <div class="card-body align-items-start text-start cardtxtDiv">
-                      <h5 class="card-title">CALL ISSUES SUMMARY</h5>
-                      <div class="loader-logo-section" id="progresscontainer_1" style="display:none; text-align:center">
-                        <img
-                          src="images/loader.92c0e254.gif"
-                          alt="Loader"
-                          class="loader-logo"
-                        />
-                      </div>  
+                      <div class="transcriptrow row" style="display:none;" id="stepperRow">
+                        <div class="stepper-wrapper" >
+                          <div class="stepper-item completed" id='step1'>
+                            <div class="step-counter">1</div>
+                            <div class="step-name" id='step1_name'>File Upload</div>
+                          </div>
+                          <div class="stepper-item " id='step2'>
+                            <div class="step-counter">2</div>
+                            <div class="step-name" id='step2_name'>Transcribe</div>
+                          </div>
+                          <div class="stepper-item " id='step3'>
+                            <div class="step-counter">3</div>
+                            <div class="step-name" id='step3_name'>Generate Insights</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="transcriptrow row" >
+                        <div class="loader-logo-section" id="progresscontainer" style="display:none; text-align:center">
+                          <img
+                            src="images/loading_inline_dots.gif"
+                            alt="Loader"
+                            class="loader-logo"
+                          />
+                        </div>
+                      </div>
+                      <div class="transcriptrow row" style="height: 1000px;position:relative;">
+                          <div class="col-sm-5 ">
+                            <div class="transciptwindow" id="transciptwindow" style="display:none;">
+                              <p class="card-text" id="callTranscript">
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col-sm-7" id="callInsights" style="display:none;">
+                            <div class="row gap-3">
+                              <div class="col-sm-4 insightCol" id="callCategory">
+                              </div>
+                              <div class="col-sm-4 insightCol" id="callsent">
+                              </div>
+                              <div class="col-sm-3 insightCol" id="callEmotion">
+                              </div>                      
+                            </div>
+                            <div class="row mt-3">
+                              <div class="col-sm-12 insightCol" id="callSummary">
+                              </div>         
+                            </div>
+                          </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -58,6 +97,9 @@
         </div>
   </div>
 </div>
-
+<script>
+  document.getElementById("callDiv").style.backgroundColor = "#003F61";
+  document.getElementById("i-call").style.color = "#FFFF";
+</script>
           
 {% endblock %}

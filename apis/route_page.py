@@ -2,12 +2,17 @@ from fastapi import APIRouter
 from fastapi import Request, Form, File, UploadFile, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
-from core.config import AZURE_OPENAI_DEPLOYMENT
+from core.config import AZURE_OPENAI_DEPLOYMENT,SPEECH_KEY,SPEECH_REGION,UPLOAD_FOLDER_PATH
+from core.matrixEngine import MatrixGPT
 import os
 import json
 import re
 import sqlite3
-
+import json
+import string
+import time
+import threading
+import wave
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_openai import AzureOpenAIEmbeddings
@@ -15,7 +20,11 @@ from langchain_chroma import Chroma
 from langchain_openai import AzureChatOpenAI
 from langchain.chains import RetrievalQA
 
+import azure.cognitiveservices.speech as speechsdk
 
+
+SPEECH_KEY=SPEECH_KEY
+SPEECH_REGION=SPEECH_REGION
 
 templates = Jinja2Templates(directory="templates")
 general_pages_router = APIRouter()
@@ -137,338 +146,77 @@ async def summarychart(request: Request):
     return {"categoryresponse":plotlyCatDataArray,"sentimentresponse":plotlySentimentDataArray,"emotionresponse":plotlyEmotionDataArray,"avgtimeresponse":plotlyAvgTimeDataArray}
 
 
-
-@general_pages_router.post("/rfpsummary")
-async def rfpsummary(file: UploadFile = File(...)):
-  
+@general_pages_router.post("/createTranscript")
+async def createTranscript(file: UploadFile = File(...)):
+    recognized_text=[]
     #file.save(app.config['UPLOAD_FOLDER_PATH']+'datafile.pdf')
     with open(UPLOAD_FOLDER_PATH+file.filename, "wb+") as file_object:
         file_object.write(file.file.read())
     
-    loader = PyPDFLoader(UPLOAD_FOLDER_PATH+file.filename)
-    pages = loader.load_and_split()
-
-    embeddings = AzureOpenAIEmbeddings()
-    chromaVecStore = Chroma.from_documents(pages, embeddings)
-
-    llm = AzureChatOpenAI(
-                deployment_name=AZURE_OPENAI_DEPLOYMENT,
-                temperature=0)
+    speech_config = speechsdk.SpeechConfig(subscription=os.environ.get('SPEECH_KEY'), region=os.environ.get('SPEECH_REGION'))
+    speech_config.speech_recognition_language="en-US"
     
-
-    query_prompt = """As a sales executive, prepare a summary of the RFP document\n
-                    Answer:
-                    """
-
-    qa_chain = RetrievalQA.from_chain_type(
-    llm, retriever=chromaVecStore.as_retriever(), chain_type="stuff"
-    )
-    query = "As a sales executive, prepare a summary of the RFP document"
-    result = qa_chain({"query": query})
-    result["result"]
-
-    print(result)
-    return {"response":result["result"]}
-
-# @general_pages_router.get("/search")
-# async def search(q: str):
-
-#     splitstr = q.split('##')
+    audio_config = speechsdk.audio.AudioConfig(filename=UPLOAD_FOLDER_PATH+file.filename)
+    # Creates a speech recognizer using a file as audio input, also specify the speech language
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+    #speech_recognition_result = speech_recognizer.recognize_once_async().get()
     
-#     api_to_use = splitstr[0]
-#     print(api_to_use)
-#     jobTitle= splitstr[1]
-#     spoc=splitstr[2]
-#     exp=splitstr[3]
-#     role=splitstr[4]+' '
-#     jobDesc=''
-#     ####SECTION FOR PROMPT TEMPLATE###
-#     job_prompt_template = """As an executive recruiter working for Capgemini, use the skills from context to prepare answer. 
-#                                 Create Job title, years of experience, Key Responsibilities and required skills sections only.\n\n
-#                                 Context: \n"""+role+""" {context}?\n
-#                                 Question: \n create job description for title :{question} with """+spoc+""" skills 
-#                                 and experience of """+exp+""" \n
-#                                 Include about """+role+"""in the answer\n
-#                                 Answer:
-#                                 """
-
-#     #####
-#     vllm = VertexAI(model_name="text-bison@001")
-
-#     if api_to_use=='OPENAI':
-#         embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", chunk_size=1)
-#         db = ElasticVectorSearch(
-#         elasticsearch_url=ESURL,
-#         index_name=INDEX_NAME,
-#         embedding=embeddings,
-#         )
-#         llm = AzureChatOpenAI(
-#                 openai_api_base=OPENAI_API_BASE,
-#                 deployment_name=OPENAI_DEPLOYMENT, 
-#                 model_name=OPENAI_MODEL,
-#                 temperature=0.4,
-#                 openai_api_version=OPENAI_API_VERSION,
-#                 openai_api_type="azure")
-
-        
-#         query=spoc+' '+jobTitle
-#         headerprompt = PromptTemplate(
-#             template=header_prompt_template, input_variables=["context", "question"]
-#         )
-        
-#         chain_type_kwargs = {"prompt": headerprompt}
-#         qa = RetrievalQA.from_chain_type(
-#             llm=llm,
-#             chain_type="stuff",
-#             retriever=db.as_retriever(
-#                 search_type="similarity",
-#                 search_kwargs={"k":3}),
-#             chain_type_kwargs=chain_type_kwargs
-#         )
-
-#         header_result = qa({'query':query})
-#         jobDesc=header_result["result"]+'\n\n'
-
-#         jobprompt = PromptTemplate(
-#             template=job_prompt_template, input_variables=["context", "question"]
-#         )
-       
-
-#         chain_type_kwargs = {"prompt": jobprompt}
-#         qa = RetrievalQA.from_chain_type(
-#             llm=llm,
-#             chain_type="stuff",
-#             retriever=db.as_retriever(
-#                 search_type="similarity",
-#                 search_kwargs={"k":3}),
-#             chain_type_kwargs=chain_type_kwargs
-#         )
-        
-        
-#         summary = qa({"query":query})
-#         summary = os.linesep.join([s for s in summary["result"].splitlines() if s])
-        
-#         footerprompt = PromptTemplate(
-#             template=footer_prompt_template, input_variables=["context", "question"]
-#         )
-#         chain_type_kwargs = {"prompt": footerprompt}
-#         qa = RetrievalQA.from_chain_type(
-#             llm=llm,
-#             chain_type="stuff",
-#             retriever=db.as_retriever(
-#                 search_type="similarity",
-#                 search_kwargs={"k":3}),
-#             chain_type_kwargs=chain_type_kwargs
-#         )
-#         query='Life at Capgemini'
-#         footer=qa({"query":query})
-
-#         jobDesc+=summary+'\n\n'+footer["result"]
-#         docList=[]
-#     else:
-#         vertex_embeddings = VertexAIEmbeddings(model_name="textembedding-gecko@001")
-#         db = ElasticVectorSearch(
-#         elasticsearch_url=ESURL,
-#         index_name="vertexgptjobdesc",
-#         embedding=vertex_embeddings,
-#         )
-   
-        
-#         query=spoc+' '+jobTitle
-
-#         headerprompt = PromptTemplate(
-#             template=header_prompt_template, input_variables=["context", "question"]
-#         )
-
-#         chain_type_kwargs = {"prompt": headerprompt}
-#         qa = RetrievalQA.from_chain_type(
-#             llm=vllm,
-#             chain_type="stuff",
-#             retriever=db.as_retriever(
-#                 search_type="similarity",
-#                 search_kwargs={"k":3}),
-#             chain_type_kwargs=chain_type_kwargs
-#         )
-
-#         header_result = qa({"query":query})
-#         jobDesc=header_result["result"]+'\n\n'
-
-#         jobprompt = PromptTemplate(
-#             template=job_prompt_template, input_variables=["context", "question"]
-#         )
-        
-#         chain_type_kwargs = {"prompt": jobprompt}
-#         qa = RetrievalQA.from_chain_type(
-#             llm=vllm,
-#             chain_type="stuff",
-#             retriever=db.as_retriever(
-#             search_type="similarity"),
-#             chain_type_kwargs=chain_type_kwargs,
-#             return_source_documents=True
-#         )
-        
-#         summary = qa({"query":query})
-#         footer=vllm(prompt=footer_prompt_template)
-#         summary = os.linesep.join([s for s in summary["result"].splitlines() if s])
-#         jobDesc+=summary+'\n\n'+footer
-#         docList=[]
-
-
-#     # Perform a search for the query
-#     #results = es.searchDocuments(q)
-#     # docList = results['docList']
-#     # summary = results['Summary']
-#     #print(results)
-#     # Stream the search results to the client
-#     #result =os.linesep.join([s for s in jobDesc.splitlines() if s])
-#     json_prompt_template = """Respond in JSON for the below.\n
-#                               -----------------------\n """+jobDesc+"""\n
-#                               -----------------------"""
-#     jsonResp=vllm(prompt=json_prompt_template)
-#     with open(JSON_FOLDER_PATH+'jobDesc.json', "w+") as file_object:
-#         file_object.write(jsonResp)
-
-#     #print('result: '+result)
-#     async def stream_response():
-#         for hit in docList:
-#             print(hit)
-#             yield "data: " + json.dumps(hit) + "\n\n"
-#         yield "data:"+json.dumps(jobDesc)+"\n\n"
-#         yield "[DONE]"
-
-#     return StreamingResponse(stream_response(), media_type="text/event-stream")
-
-
-
-# @general_pages_router.post("/jdreplace")
-# async def jdreplace(file: UploadFile = File(...),aiengine:str=Form(...)):
-  
-#     #file.save(app.config['UPLOAD_FOLDER_PATH']+'datafile.pdf')
-#     with open(UPLOAD_FOLDER_PATH+file.filename, "wb+") as file_object:
-#         file_object.write(file.file.read())
+    done = False
     
-#     loader = PyPDFLoader(UPLOAD_FOLDER_PATH+file.filename)
-#     pages = loader.load_and_split()
+    def conversation_transcriber_recognition_canceled_cb(evt: speechsdk.SessionEventArgs):
+        print('Canceled event')
 
-#     print(aiengine)
-#     vllm = VertexAI(model_name="text-bison@001")
-#     if aiengine=='OPENAI':
-        
-#         embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", chunk_size=1)
-#         faissIndex = FAISS.from_documents(pages, embeddings)
+    def conversation_transcriber_session_stopped_cb(evt: speechsdk.SessionEventArgs):
+        print('SessionStopped event')
 
-#         docs = faissIndex.similarity_search("projects worked")
+    def conversation_transcriber_transcribed_cb(evt: speechsdk.SpeechRecognitionEventArgs):
+        #print('TRANSCRIBED:')
+        if evt.result.reason == speechsdk.ResultReason.RecognizedSpeech:
+            #print(evt.result.speaker_id+':'+evt.result.text)
+            recognized_text.append(evt.result.speaker_id+':'+evt.result.text)
+            #print('\tSpeaker ID={}'.format(evt.result.speaker_id))
+        elif evt.result.reason == speechsdk.ResultReason.NoMatch:
+            print('\tNOMATCH: Speech could not be TRANSCRIBED: {}'.format(evt.result.no_match_details))
 
-#         llm = AzureOpenAI(
-#                     deployment_name=OPENAI_DEPLOYMENT, 
-#                     model_name=OPENAI_MODEL,
-#                     temperature=0,
-#                     openai_api_version=OPENAI_API_VERSION)
-#         chain = load_qa_chain(llm, chain_type="stuff")
-#         skills=chain.run(input_documents=docs, question="skills")
-#         domain=chain.run(input_documents=docs, question="domain experience,total experience")
-#         responsibility=chain.run(input_documents=docs, question="summary, responsibilities")
-#         context = responsibility+' '+domain+' ' +skills 
-                
-#         header_prompt = """Use the context to prepare a summarised job description for Capgemini in 100 words.\n\n
-#                             Context: \n """+context+"""?\n
-#                             Answer:
-#                             """
-        
-#         jobDesc=llm(prompt=header_prompt)    
+    def conversation_transcriber_session_started_cb(evt: speechsdk.SessionEventArgs):
+        print('SessionStarted event')
     
-#         job_prompt = """As an executive recruiter working for Capgemini, use the context to prepare answer.\n
-#                         Create Job title, years of experience, Key Responsibilities and required skills sections.\n\n
-#                         Context: \n"""+context+"""\n
-#                         Answer:
-#                         """
-#         summary=llm(prompt=job_prompt)
-#         summary = os.linesep.join([s for s in summary.splitlines() if s])
-#         footer=llm(prompt=footer_prompt_template)
-#         jobDesc =jobDesc+'\n\n'+ summary+'\n\n'+footer
+    conversation_transcriber = speechsdk.transcription.ConversationTranscriber(speech_config=speech_config, audio_config=audio_config)
+
+    transcribing_stop = False
+
+    def stop_cb(evt: speechsdk.SessionEventArgs):
+        #"""callback that signals to stop continuous recognition upon receiving an event `evt`"""
+        print('CLOSING on {}'.format(evt))
+        nonlocal transcribing_stop
+        transcribing_stop = True
+
+    # Connect callbacks to the events fired by the conversation transcriber
+    conversation_transcriber.transcribed.connect(conversation_transcriber_transcribed_cb)
+    conversation_transcriber.session_started.connect(conversation_transcriber_session_started_cb)
+    conversation_transcriber.session_stopped.connect(conversation_transcriber_session_stopped_cb)
+    conversation_transcriber.canceled.connect(conversation_transcriber_recognition_canceled_cb)
+    # stop transcribing on either session stopped or canceled events
+    conversation_transcriber.session_stopped.connect(stop_cb)
+    conversation_transcriber.canceled.connect(stop_cb)
+
+    conversation_transcriber.start_transcribing_async()
+
+    # Waits for completion.
+    while not transcribing_stop:
+        time.sleep(.5)
+
+    conversation_transcriber.stop_transcribing_async()
+    final_transcript=''
+    for record in recognized_text:
+        final_transcript+=record+'\n'
     
-#     else:
-#         vertex_embeddings = VertexAIEmbeddings(model_name="textembedding-gecko@001")
-#         faissIndex = FAISS.from_documents(pages, vertex_embeddings)
-#         docs = faissIndex.similarity_search("projects worked")
-#         chain = load_qa_chain(vllm, chain_type="stuff")
-#         skills=chain.run(input_documents=docs, question="skills")
-#         domain=chain.run(input_documents=docs, question="domain experience,total experience")
-#         responsibility=chain.run(input_documents=docs, question="summary, responsibilities")
-#         context = responsibility+' '+domain+' ' +skills 
-#         header_prompt = """Use the context to prepare a summarised job description for Cagpgemini in 100 words.\n\n
-#                     Context: \n """+context+"""?\n
-#                     Answer:
-#                     """
+    return {"response":final_transcript}
 
-#         jobHeader=vllm(prompt=header_prompt)    
+@general_pages_router.post("/generateInsights")
+async def generateInsight(calltranscript: str= Form(...)):
+    print('In Insights')
+    insightsData = MatrixGPT.generateInsights(calltranscript)
+    print(insightsData)
     
-#         job_prompt = """As an executive recruiter working for Capgemini, use the context to prepare answer.\n
-#                         Create Job title, years of experience, Key Responsibilities and required skills sections.\n\n
-#                         Context: \n"""+context+"""\n
-#                         Answer:
-#                         """
-#         summary=vllm(prompt=job_prompt)
-#         summary=os.linesep.join([s for s in summary.splitlines() if s])
-#         footer=vllm(prompt=footer_prompt_template)
-#         jobDesc =jobHeader+'\n\n'+ summary+'\n\n'+footer
-
-#     json_prompt_template = """Respond in JSON for the below.\n
-#                         -----------------------\n """+jobDesc+"""\n
-#                         -----------------------"""
-#     jsonResp=vllm(prompt=json_prompt_template)
-#     with open(JSON_FOLDER_PATH+'jobDesc.json', "w+") as file_object:
-#         file_object.write(jsonResp)
-
-#     return {"response":jobDesc}
-
-
-# @general_pages_router.get("/modify")
-# async def search(q: str):
-
-#     splitstr = q.split('###')
-    
-#     modifyStr = splitstr[0]
-#     jobDesc = splitstr[1]
-    
-    
-#     headerDesc=re.split(r'(?:\r?\n){2,}',jobDesc)
-
-#     print(headerDesc[1])
-#     ####SECTION FOR PROMPT TEMPLATE###
-#     header_prompt_template = """Modify as per the question\n
-#                              Question: """+modifyStr+""" \n
-#                              -----------\n"""+headerDesc[0]+"""\n
-#                              ------------"""
-
-#     job_prompt_template = """Keep content as provided. Only modify or add as per question\n
-#                              Question: """+modifyStr+""" \n
-#                             -----------\n"""+headerDesc[1]+"""\n
-#                             ------------"""
-
-#     #####
-    
-#     llm = AzureChatOpenAI(
-#                 openai_api_base=OPENAI_API_BASE,
-#                 deployment_name=OPENAI_DEPLOYMENT, 
-#                 model_name=OPENAI_MODEL,
-#                 temperature=1,
-#                 openai_api_version=OPENAI_API_VERSION,
-#                 openai_api_type="azure")
-
-#     msg = HumanMessage(content=header_prompt_template)
-#     headerSection=llm(messages=[msg]).content
-
-#     msg = HumanMessage(content=job_prompt_template)
-#     jobDescSection=llm(messages=[msg]).content
-
-#     msg = HumanMessage(content=footer_prompt_template_1)
-#     lacSection= llm(messages=[msg]).content
-
-#     jobDesc=headerSection+'\n\n'+jobDescSection+'\n\n'+lacSection
-
-#     async def stream_response():
-#         yield "data:"+json.dumps(jobDesc)+"\n\n"
-#         yield "[DONE]"
-
-#     return StreamingResponse(stream_response(), media_type="text/event-stream")
+    return insightsData

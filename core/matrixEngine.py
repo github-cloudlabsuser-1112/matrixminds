@@ -4,7 +4,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts import PromptTemplate
 from langchain.output_parsers.openai_tools import JsonOutputToolsParser
 
-from config import AZURE_OPENAI_ENDPOINT,AZURE_OPENAI_DEPLOYMENT,AZURE_OPENAI_MODEL
+from core.config import AZURE_OPENAI_ENDPOINT,AZURE_OPENAI_DEPLOYMENT,AZURE_OPENAI_MODEL
 import openpyxl
 import sqlite3
 import json
@@ -58,3 +58,24 @@ class MatrixGPT:
             sql= '''INSERT INTO transcript(id,CALL_DETAILS,DATE_OF_CALL,DURATION,summary,sentiment,emotion,category)values(?,?,?,?,?,?,?,?)'''
             cursor.execute(sql, transcript)
             
+    def generateInsights(call_transcript):
+        template = """
+        You are a professional customer call classifier. You are given a call transcript between a customer and an agent representing MatrixTel, A Telecom Company. Your task is to classify the call transcript into one of the following categories: ['New Customer Inquiry', 'Billing Inquiry', 'Technical Support', 'Service Upgrade or Add-Ons', 'Account Cancellation'], and also provide the sentiment and emotion of the call transcript.
+
+        call transcript:
+        {call_transcript}
+        """
+        llm = AzureChatOpenAI(deployment_name=AZURE_OPENAI_DEPLOYMENT, model_name=AZURE_OPENAI_MODEL, temperature=0)
+        prompt = PromptTemplate.from_template(template)
+
+
+        #CREATING LLM CHAIN
+        chain = prompt | llm.bind_tools([CallClassification]) | JsonOutputToolsParser()
+        res = chain.invoke({"call_transcript": call_transcript, "question": "What is the summary, sentiment, emotion and category of the call transcript?"})
+        data = res[0]['args']
+        summary=data['summary']
+        sentiment=data['sentiment']
+        emotion=data['emotion']
+        category=data['category']
+        
+        return data
