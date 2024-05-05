@@ -4,4 +4,5 @@ langchain_community==0.0.36
 langchain_openai==0.1.6
 langchain_chroma==0.1.0
 langchain==0.1.17
-
+openpyxl==3.1.2
+azure-cognitiveservices-speech==1.37.0
